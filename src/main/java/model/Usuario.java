@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "usuarios")
+@Table(name = "usuarios", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
 public class Usuario {
 
     public enum Perfil {
@@ -27,6 +27,7 @@ public class Usuario {
     private Entidade entidade;
 
     private String nome;
+    @Column(unique = true)
     private String email;
     private String senha;
 

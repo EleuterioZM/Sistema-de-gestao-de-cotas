@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Formulário de Entidade</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center gap-3">
+                            <a href="/" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-arrow-left"></i> Voltar ao Menu
+                            </a>
+                            <h2 class="mb-0" th:text="${entidade.id == null ? 'Nova Entidade' : 'Editar Entidade'}"></h2>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/entidades}" th:object="${entidade}" method="post">
+                            <input type="hidden" th:field="*{id}">
+                            
+                            <div class="mb-3">
+                                <label for="nome" class="form-label">Nome da Entidade *</label>
+                                <input type="text" class="form-control" id="nome" th:field="*{nome}" required>
+                                <div class="form-text">Nome completo da entidade</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="descricao" class="form-label">Descrição</label>
+                                <textarea class="form-control" id="descricao" th:field="*{descricao}" rows="3"></textarea>
+                                <div class="form-text">Descrição detalhada da entidade (opcional)</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="logoUrl" class="form-label">URL do Logo</label>
+                                <input type="url" class="form-control" id="logoUrl" th:field="*{logoUrl}">
+                                <div class="form-text">URL da imagem do logo da entidade (opcional)</div>
+                            </div>
+                            
+                            <div class="alert alert-info">
+                                <small>* Campos obrigatórios</small>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">Salvar</button>
+                                <a href="/entidades" class="btn btn-secondary">Cancelar</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

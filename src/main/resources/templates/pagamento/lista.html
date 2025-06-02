@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista de Pagamentos</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Lista de Pagamentos</h2>
+            <a th:href="@{/pagamentos/novo}" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i> Novo Pagamento
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cota</th>
+                                <th>Valor</th>
+                                <th>Data</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${pagamentos.empty}">
+                                <td colspan="6" class="text-center">Nenhum pagamento encontrado</td>
+                            </tr>
+                            <tr th:each="pagamento : ${pagamentos}">
+                                <td th:text="${pagamento.id}"></td>
+                                <td th:text="${pagamento.cota.nome}"></td>
+                                <td th:text="${#numbers.formatCurrency(pagamento.valorPago)}"></td>
+                                <td th:text="${#temporals.format(pagamento.dataPagamento, 'dd/MM/yyyy')}"></td>
+                                <td>
+                                    <span th:class="${'badge ' + (pagamento.estado == T(model.Pagamento.Estado).pendente ? 'bg-warning' : 
+                                                              (pagamento.estado == T(model.Pagamento.Estado).confirmado ? 'bg-success' : 'bg-danger'))}"
+                                          th:text="${pagamento.estado}">
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a th:href="@{/pagamentos/{id}/visualizar(id=${pagamento.id})}" 
+                                           class="btn btn-sm btn-info" 
+                                           title="Visualizar">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a th:href="@{/pagamentos/{id}/editar(id=${pagamento.id})}" 
+                                           class="btn btn-sm btn-warning" 
+                                           title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button th:onclick="'confirmarExclusao(' + ${pagamento.id} + ')'" 
+                                                class="btn btn-sm btn-danger" 
+                                                title="Excluir">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        function confirmarExclusao(id) {
+            if (confirm('Tem certeza que deseja excluir este pagamento?')) {
+                fetch('/pagamentos/' + id, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Detalhes do Pagamento</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Detalhes do Pagamento</h2>
+            <a th:href="@{/pagamentos}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Informações do Pagamento</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>ID:</strong> <span th:text="${pagamento.id}"></span></p>
+                        <p><strong>Valor:</strong> <span th:text="${#numbers.formatCurrency(pagamento.valorPago)}"></span></p>
+                        <p><strong>Data:</strong> <span th:text="${#temporals.format(pagamento.dataPagamento, 'dd/MM/yyyy')}"></span></p>
+                        <p><strong>Status:</strong> 
+                            <span th:class="${'badge ' + (pagamento.estado == T(model.Pagamento.Estado).pendente ? 'bg-warning' : 
+                                                      (pagamento.estado == T(model.Pagamento.Estado).confirmado ? 'bg-success' : 'bg-danger'))}"
+                                  th:text="${pagamento.estado}">
+                            </span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Cota:</strong> <span th:text="${pagamento.cota.nome}"></span></p>
+                        <p><strong>Entidade:</strong> <span th:text="${pagamento.cota.entidade.nome}"></span></p>
+                        <p><strong>Método de Pagamento:</strong> <span th:text="${pagamento.metodoPagamento}"></span></p>
+                        <p><strong>Comprovante:</strong> 
+                            <a th:if="${pagamento.comprovante != null}" 
+                               th:href="@{/pagamentos/{id}/comprovante(id=${pagamento.id})}" 
+                               class="btn btn-sm btn-info" 
+                               target="_blank">
+                                <i class="bi bi-file-earmark-text"></i> Visualizar
+                            </a>
+                            <span th:unless="${pagamento.comprovante != null}" class="text-muted">Não disponível</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Histórico de Status</h5>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Status</th>
+                                <th>Observação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${pagamento.historicoStatus.empty}">
+                                <td colspan="3" class="text-center">Nenhum histórico registrado</td>
+                            </tr>
+                            <tr th:each="historico : ${pagamento.historicoStatus}">
+                                <td th:text="${#temporals.format(historico.data, 'dd/MM/yyyy HH:mm')}"></td>
+                                <td>
+                                    <span th:class="${'badge ' + (historico.status == T(model.Status).PENDENTE ? 'bg-warning' : 
+                                                             (historico.status == T(model.Status).APROVADO ? 'bg-success' : 'bg-danger'))}"
+                                          th:text="${historico.status}">
+                                    </span>
+                                </td>
+                                <td th:text="${historico.observacao}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

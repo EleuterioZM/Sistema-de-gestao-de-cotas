@@ -1,10 +1,12 @@
 package controller;
 
 import lombok.RequiredArgsConstructor;
-import model.Relatorio;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import service.RelatorioService;
 
 @Controller
@@ -14,32 +16,47 @@ public class RelatorioController {
     private final RelatorioService relatorioService;
 
     @GetMapping
-    public String listarRelatorios(Model model) {
-        model.addAttribute("relatorios", relatorioService.listarTodos());
+    public String lista() {
         return "relatorio/lista";
     }
 
-    @GetMapping("/novo")
-    public String novoRelatorio(Model model) {
-        model.addAttribute("relatorio", new Relatorio());
-        return "relatorio/form";
+    @GetMapping("/cotas/pdf")
+    public ResponseEntity<byte[]> downloadCotasPDF() {
+        byte[] relatorio = relatorioService.gerarRelatorioCotasPDF();
+        
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=relatorio-cotas.pdf")
+            .contentType(MediaType.APPLICATION_PDF)
+            .body(relatorio);
     }
 
-    @PostMapping
-    public String salvarRelatorio(@ModelAttribute Relatorio relatorio) {
-        relatorioService.salvar(relatorio);
-        return "redirect:/relatorios";
+    @GetMapping("/cotas/excel")
+    public ResponseEntity<byte[]> downloadCotasExcel() {
+        byte[] relatorio = relatorioService.gerarRelatorioCotasExcel();
+        
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=relatorio-cotas.xlsx")
+            .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+            .body(relatorio);
     }
 
-    @GetMapping("/{id}/editar")
-    public String editarRelatorio(@PathVariable Long id, Model model) {
-        model.addAttribute("relatorio", relatorioService.buscarPorId(id));
-        return "relatorio/form";
+    @GetMapping("/pagamentos/pdf")
+    public ResponseEntity<byte[]> downloadPagamentosPDF() {
+        byte[] relatorio = relatorioService.gerarRelatorioPagamentosPDF();
+        
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=relatorio-pagamentos.pdf")
+            .contentType(MediaType.APPLICATION_PDF)
+            .body(relatorio);
     }
 
-    @GetMapping("/{id}/deletar")
-    public String deletarRelatorio(@PathVariable Long id) {
-        relatorioService.deletar(id);
-        return "redirect:/relatorios";
+    @GetMapping("/pagamentos/excel")
+    public ResponseEntity<byte[]> downloadPagamentosExcel() {
+        byte[] relatorio = relatorioService.gerarRelatorioPagamentosExcel();
+        
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=relatorio-pagamentos.xlsx")
+            .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+            .body(relatorio);
     }
 }

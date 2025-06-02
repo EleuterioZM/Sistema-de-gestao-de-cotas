@@ -5,6 +5,7 @@ import model.Entidade;
 import org.springframework.stereotype.Service;
 import repository.EntidadeRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -22,6 +23,9 @@ public class EntidadeService {
     }
 
     public Entidade salvar(Entidade entidade) {
+        if (entidade.getId() == null) {
+            entidade.setDataCriacao(LocalDateTime.now());
+        }
         return entidadeRepository.save(entidade);
     }
 

@@ -19,22 +19,36 @@ public class NotificacaoController {
         return "notificacao/lista";
     }
 
-    @GetMapping("/novo")
-    public String novaNotificacao(Model model) {
-        model.addAttribute("notificacao", new Notificacao());
-        return "notificacao/form";
+    @GetMapping("/entidade/{entidadeId}")
+    public String listarNotificacoesPorEntidade(@PathVariable Long entidadeId, Model model) {
+        model.addAttribute("notificacoes", notificacaoService.listarPorEntidade(entidadeId));
+        return "notificacao/lista";
     }
 
-    @PostMapping
-    public String salvarNotificacao(@ModelAttribute Notificacao notificacao) {
-        notificacaoService.salvar(notificacao);
-        return "redirect:/notificacoes";
+    @GetMapping("/nao-lidas")
+    public String listarNotificacoesNaoLidas(Model model) {
+        model.addAttribute("notificacoes", notificacaoService.listarNaoLidas());
+        return "notificacao/lista";
     }
 
-    @GetMapping("/{id}/editar")
-    public String editarNotificacao(@PathVariable Long id, Model model) {
-        model.addAttribute("notificacao", notificacaoService.buscarPorId(id));
-        return "notificacao/form";
+    @GetMapping("/entidade/{entidadeId}/nao-lidas")
+    public String listarNotificacoesNaoLidasPorEntidade(@PathVariable Long entidadeId, Model model) {
+        model.addAttribute("notificacoes", notificacaoService.listarNaoLidasPorEntidade(entidadeId));
+        return "notificacao/lista";
+    }
+
+    @PostMapping("/{id}/marcar-lida")
+    @ResponseBody
+    public String marcarComoLida(@PathVariable Long id) {
+        notificacaoService.marcarComoLida(id);
+        return "Notificação marcada como lida";
+    }
+
+    @PostMapping("/entidade/{entidadeId}/marcar-todas-lidas")
+    @ResponseBody
+    public String marcarTodasComoLidas(@PathVariable Long entidadeId) {
+        notificacaoService.marcarTodasComoLidas(entidadeId);
+        return "Todas as notificações foram marcadas como lidas";
     }
 
     @GetMapping("/{id}/deletar")

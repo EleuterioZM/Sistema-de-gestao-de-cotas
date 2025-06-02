@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="notificacoes">
+        <div class="dropdown">
+            <button class="btn btn-link text-white position-relative" type="button" id="notificacoesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-bell"></i>
+                <span th:if="${notificacoes != null and not #lists.isEmpty(notificacoes)}" 
+                      class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    <span th:text="${#lists.size(notificacoes)}"></span>
+                </span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificacoesDropdown">
+                <li th:if="${notificacoes == null or #lists.isEmpty(notificacoes)}">
+                    <span class="dropdown-item">Nenhuma notificação</span>
+                </li>
+                <li th:each="notificacao : ${notificacoes}">
+                    <div class="dropdown-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <strong th:text="${notificacao.titulo}"></strong>
+                            <small th:text="${#temporals.format(notificacao.dataEnvio, 'dd/MM/yyyy HH:mm')}"></small>
+                        </div>
+                        <p class="mb-0" th:text="${notificacao.mensagem}"></p>
+                        <button th:if="${not notificacao.lida}" 
+                                class="btn btn-sm btn-link p-0 mt-1" 
+                                th:onclick="'marcarComoLida(' + ${notificacao.id} + ')'">
+                            Marcar como lida
+                        </button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html> 

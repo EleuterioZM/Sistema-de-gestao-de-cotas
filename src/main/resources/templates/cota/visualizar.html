@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Detalhes da Cota</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Detalhes da Cota</h2>
+            <a th:href="@{/cotas}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Informações da Cota</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>ID:</strong> <span th:text="${cota.id}"></span></p>
+                        <p><strong>Nome:</strong> <span th:text="${cota.nome}"></span></p>
+                        <p><strong>Valor:</strong> <span th:text="${#numbers.formatCurrency(cota.valor)}"></span></p>
+                        <p><strong>Status:</strong> 
+                            <span th:class="${'badge ' + (cota.status == T(model.Cota.Status).pendente ? 'bg-warning' : 
+                                                      (cota.status == T(model.Cota.Status).paga ? 'bg-success' : 'bg-danger'))}"
+                                  th:text="${cota.status}">
+                            </span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Entidade:</strong> <span th:text="${cota.entidade.nome}"></span></p>
+                        <p><strong>CNPJ:</strong> <span th:text="${cota.entidade.cnpj}"></span></p>
+                        <p><strong>Email:</strong> <span th:text="${cota.entidade.email}"></span></p>
+                        <p><strong>Telefone:</strong> <span th:text="${cota.entidade.telefone}"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Pagamentos</h5>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Data</th>
+                                <th>Valor</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${cota.pagamentos.empty}">
+                                <td colspan="5" class="text-center">Nenhum pagamento registrado</td>
+                            </tr>
+                            <tr th:each="pagamento : ${cota.pagamentos}">
+                                <td th:text="${pagamento.id}"></td>
+                                <td th:text="${#temporals.format(pagamento.dataPagamento, 'dd/MM/yyyy')}"></td>
+                                <td th:text="${#numbers.formatCurrency(pagamento.valorPago)}"></td>
+                                <td>
+                                    <span th:class="${'badge ' + (pagamento.estado == T(model.Pagamento.Estado).pendente ? 'bg-warning' : 
+                                                             (pagamento.estado == T(model.Pagamento.Estado).confirmado ? 'bg-success' : 'bg-danger'))}"
+                                          th:text="${pagamento.estado}">
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a th:href="@{/pagamentos/{id}/visualizar(id=${pagamento.id})}" 
+                                           class="btn btn-sm btn-info" 
+                                           title="Visualizar">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a th:href="@{/pagamentos/{id}/editar(id=${pagamento.id})}" 
+                                           class="btn btn-sm btn-warning" 
+                                           title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

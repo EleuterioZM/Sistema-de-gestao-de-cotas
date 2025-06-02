@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista de Cotas</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Lista de Cotas</h2>
+            <a th:href="@{/cotas/novo}" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i> Nova Cota
+            </a>
+        </div>
+
+        <!-- Mensagem de erro -->
+        <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${erro}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Mensagem de sucesso -->
+        <div th:if="${mensagem}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${mensagem}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Entidade</th>
+                                <th>Valor</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${cotas == null or cotas.empty}">
+                                <td colspan="6" class="text-center">Nenhuma cota encontrada</td>
+                            </tr>
+                            <tr th:each="cota : ${cotas}">
+                                <td th:text="${cota.id}"></td>
+                                <td th:text="${cota.nome}"></td>
+                                <td th:text="${cota.entidade.nome}"></td>
+                                <td th:text="${#numbers.formatCurrency(cota.valor)}"></td>
+                                <td>
+                                    <span th:class="${'badge ' + (cota.status == T(model.Cota.Status).pendente ? 'bg-warning' : 
+                                                              (cota.status == T(model.Cota.Status).paga ? 'bg-success' : 'bg-danger'))}"
+                                          th:text="${cota.status}">
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a th:href="@{/cotas/{id}/visualizar(id=${cota.id})}" 
+                                           class="btn btn-sm btn-info" 
+                                           title="Visualizar">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a th:href="@{/cotas/{id}/editar(id=${cota.id})}" 
+                                           class="btn btn-sm btn-warning" 
+                                           title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button th:onclick="'confirmarExclusao(' + ${cota.id} + ')'" 
+                                                class="btn btn-sm btn-danger" 
+                                                title="Excluir">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        function confirmarExclusao(id) {
+            if (confirm('Tem certeza que deseja excluir esta cota?')) {
+                fetch('/cotas/' + id, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Erro ao excluir cota');
+                    }
+                }).catch(error => {
+                    alert('Erro ao excluir cota: ' + error);
+                });
+            }
+        }
+    </script>
+</body>
+</html>

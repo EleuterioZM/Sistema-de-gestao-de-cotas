@@ -42,4 +42,10 @@ public class EntidadeController {
         entidadeService.deletar(id);
         return "redirect:/entidades";
     }
+
+    @GetMapping("/{id}/visualizar")
+    public String visualizar(@PathVariable Long id, Model model) {
+        model.addAttribute("entidade", entidadeService.buscarPorId(id));
+        return "entidade/visualizar";
+    }
 }

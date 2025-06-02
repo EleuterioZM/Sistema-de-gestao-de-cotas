@@ -2,10 +2,12 @@ package controller;
 
 import lombok.RequiredArgsConstructor;
 import model.Cota;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import service.CotaService;
+import service.EntidadeService;
 
 @Controller
 @RequestMapping("/cotas")
@@ -13,33 +15,73 @@ import service.CotaService;
 public class CotaController {
     private final CotaService cotaService;
 
+    @Autowired
+    private EntidadeService entidadeService;
+
     @GetMapping
     public String listarCotas(Model model) {
-        model.addAttribute("cotas", cotaService.listarTodos());
-        return "cota/lista";
+        try {
+            model.addAttribute("cotas", cotaService.listarTodos());
+            return "cota/lista";
+        } catch (Exception e) {
+            model.addAttribute("erro", "Erro ao carregar cotas: " + e.getMessage());
+            return "cota/lista";
+        }
     }
 
     @GetMapping("/novo")
     public String novaCota(Model model) {
-        model.addAttribute("cota", new Cota());
-        return "cota/form";
-    }
-
-    @PostMapping
-    public String salvarCota(@ModelAttribute Cota cota) {
-        cotaService.salvar(cota);
-        return "redirect:/cotas";
+        try {
+            model.addAttribute("cota", new Cota());
+            model.addAttribute("entidades", entidadeService.listarTodos());
+            return "cota/form";
+        } catch (Exception e) {
+            model.addAttribute("erro", "Erro ao carregar formulário: " + e.getMessage());
+            return "redirect:/cotas";
+        }
     }
 
     @GetMapping("/{id}/editar")
     public String editarCota(@PathVariable Long id, Model model) {
-        model.addAttribute("cota", cotaService.buscarPorId(id));
-        return "cota/form";
+        try {
+            model.addAttribute("cota", cotaService.buscarPorId(id));
+            model.addAttribute("entidades", entidadeService.listarTodos());
+            return "cota/form";
+        } catch (Exception e) {
+            model.addAttribute("erro", "Erro ao carregar cota: " + e.getMessage());
+            return "redirect:/cotas";
+        }
     }
 
-    @GetMapping("/{id}/deletar")
+    @PostMapping
+    public String salvarCota(@ModelAttribute Cota cota) {
+        try {
+            cotaService.salvar(cota);
+            return "redirect:/cotas";
+        } catch (Exception e) {
+            return "redirect:/cotas?erro=" + e.getMessage();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseBody
     public String deletarCota(@PathVariable Long id) {
-        cotaService.deletar(id);
-        return "redirect:/cotas";
+        try {
+            cotaService.deletar(id);
+            return "Cota excluída com sucesso";
+        } catch (Exception e) {
+            return "Erro ao excluir cota: " + e.getMessage();
+        }
+    }
+
+    @GetMapping("/{id}/visualizar")
+    public String visualizar(@PathVariable Long id, Model model) {
+        try {
+            model.addAttribute("cota", cotaService.buscarPorId(id));
+            return "cota/visualizar";
+        } catch (Exception e) {
+            model.addAttribute("erro", "Erro ao carregar cota: " + e.getMessage());
+            return "redirect:/cotas";
+        }
     }
 }

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista de Entidades</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Lista de Entidades</h2>
+            <a th:href="@{/entidades/novo}" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i> Nova Entidade
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Descrição</th>
+                                <th>Data de Criação</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${entidades.empty}">
+                                <td colspan="5" class="text-center">Nenhuma entidade encontrada</td>
+                            </tr>
+                            <tr th:each="entidade : ${entidades}">
+                                <td th:text="${entidade.id}"></td>
+                                <td th:text="${entidade.nome}"></td>
+                                <td th:text="${entidade.descricao}"></td>
+                                <td th:text="${#temporals.format(entidade.dataCriacao, 'dd/MM/yyyy HH:mm')}"></td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a th:href="@{/entidades/{id}/visualizar(id=${entidade.id})}" 
+                                           class="btn btn-sm btn-info" 
+                                           title="Visualizar">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a th:href="@{/entidades/{id}/editar(id=${entidade.id})}" 
+                                           class="btn btn-sm btn-warning" 
+                                           title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button th:onclick="'confirmarExclusao(' + ${entidade.id} + ')'" 
+                                                class="btn btn-sm btn-danger" 
+                                                title="Excluir">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        function confirmarExclusao(id) {
+            if (confirm('Tem certeza que deseja excluir esta entidade?')) {
+                fetch('/entidades/' + id, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
