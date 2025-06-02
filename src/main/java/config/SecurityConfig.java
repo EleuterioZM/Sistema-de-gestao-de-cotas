@@ -29,7 +29,9 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/login?logout")
                 .permitAll()
             )
-            .csrf(csrf -> csrf.disable())
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers(new AntPathRequestMatcher("/usuarios/excluir", "POST"))
+            )
             .headers(headers -> headers.frameOptions().disable());
 
         return http.build();

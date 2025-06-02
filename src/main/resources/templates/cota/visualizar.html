@@ -2,89 +2,271 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Detalhes da Cota</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #2d3748;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .header {
+            text-align: left;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 15px;
+        }
+
+        .main-title {
+            font-size: 1.875rem;
+            font-weight: 600;
+            color: #1a202c;
+        }
+
+        .card {
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin: 0;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .info-label {
+            font-weight: 500;
+            color: #4a5568;
+            width: 150px;
+        }
+
+        .info-value {
+            color: #2d3748;
+            flex: 1;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-warning {
+            background-color: #ecc94b;
+            color: #744210;
+        }
+
+        .badge-success {
+            background-color: #48bb78;
+            color: #22543d;
+        }
+
+        .badge-danger {
+            background-color: #f56565;
+            color: #742a2a;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background-color: #f7fafc;
+            color: #4a5568;
+            font-weight: 600;
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4a5568;
+            font-size: 0.875rem;
+        }
+
+        .table tr:hover {
+            background-color: #f7fafc;
+        }
+
+        .btn-action {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            margin-right: 8px;
+            font-size: 0.875rem;
+        }
+
+        .btn-info {
+            background-color: #4299e1;
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: #ed8936;
+            color: white;
+        }
+
+        .btn-action:hover {
+            opacity: 0.9;
+            color: white;
+        }
+
+        .btn-voltar {
+            background-color: #718096;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+            font-size: 0.875rem;
+        }
+
+        .btn-voltar:hover {
+            background-color: #4a5568;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-    <div th:fragment="content">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Detalhes da Cota</h2>
-            <a th:href="@{/cotas}" class="btn btn-secondary">
-                <i class="bi bi-arrow-left"></i> Voltar
-            </a>
+    <div class="container">
+        <div class="header">
+            <h1 class="main-title">Detalhes da Cota</h1>
         </div>
 
-        <div class="card mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Informações da Cota</h2>
+            </div>
             <div class="card-body">
-                <h5 class="card-title">Informações da Cota</h5>
-                <div class="row">
-                    <div class="col-md-6">
-                        <p><strong>ID:</strong> <span th:text="${cota.id}"></span></p>
-                        <p><strong>Nome:</strong> <span th:text="${cota.nome}"></span></p>
-                        <p><strong>Valor:</strong> <span th:text="${#numbers.formatCurrency(cota.valor)}"></span></p>
-                        <p><strong>Status:</strong> 
-                            <span th:class="${'badge ' + (cota.status == T(model.Cota.Status).pendente ? 'bg-warning' : 
-                                                      (cota.status == T(model.Cota.Status).paga ? 'bg-success' : 'bg-danger'))}"
-                                  th:text="${cota.status}">
-                            </span>
-                        </p>
+                <div class="info-row">
+                    <div class="info-label">ID:</div>
+                    <div class="info-value" th:text="${cota.id}"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Nome:</div>
+                    <div class="info-value" th:text="${cota.nome}"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Valor:</div>
+                    <div class="info-value" th:text="${#numbers.formatCurrency(cota.valor)}"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Status:</div>
+                    <div class="info-value">
+                        <span th:class="${'badge ' + (cota.status.name() == 'PAGA' ? 'badge-success' : 
+                                                  (cota.status.name() == 'PENDENTE' ? 'badge-warning' : 'badge-danger'))}"
+                              th:text="${cota.status}">
+                        </span>
                     </div>
-                    <div class="col-md-6">
-                        <p><strong>Entidade:</strong> <span th:text="${cota.entidade.nome}"></span></p>
-                        <p><strong>CNPJ:</strong> <span th:text="${cota.entidade.cnpj}"></span></p>
-                        <p><strong>Email:</strong> <span th:text="${cota.entidade.email}"></span></p>
-                        <p><strong>Telefone:</strong> <span th:text="${cota.entidade.telefone}"></span></p>
-                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Entidade:</div>
+                    <div class="info-value" th:text="${cota.entidade.nome}"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Descrição:</div>
+                    <div class="info-value" th:text="${cota.entidade.descricao}"></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Logo:</div>
+                    <div class="info-value" th:text="${cota.entidade.logoUrl}"></div>
                 </div>
             </div>
         </div>
 
         <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Pagamentos</h2>
+            </div>
             <div class="card-body">
-                <h5 class="card-title">Pagamentos</h5>
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Data</th>
-                                <th>Valor</th>
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:if="${cota.pagamentos.empty}">
-                                <td colspan="5" class="text-center">Nenhum pagamento registrado</td>
-                            </tr>
-                            <tr th:each="pagamento : ${cota.pagamentos}">
-                                <td th:text="${pagamento.id}"></td>
-                                <td th:text="${#temporals.format(pagamento.dataPagamento, 'dd/MM/yyyy')}"></td>
-                                <td th:text="${#numbers.formatCurrency(pagamento.valorPago)}"></td>
-                                <td>
-                                    <span th:class="${'badge ' + (pagamento.estado == T(model.Pagamento.Estado).pendente ? 'bg-warning' : 
-                                                             (pagamento.estado == T(model.Pagamento.Estado).confirmado ? 'bg-success' : 'bg-danger'))}"
-                                          th:text="${pagamento.estado}">
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a th:href="@{/pagamentos/{id}/visualizar(id=${pagamento.id})}" 
-                                           class="btn btn-sm btn-info" 
-                                           title="Visualizar">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                        <a th:href="@{/pagamentos/{id}/editar(id=${pagamento.id})}" 
-                                           class="btn btn-sm btn-warning" 
-                                           title="Editar">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Data</th>
+                            <th>Valor</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${cota.pagamentos.empty}">
+                            <td colspan="5" class="text-center">Nenhum pagamento registrado</td>
+                        </tr>
+                        <tr th:each="pagamento : ${cota.pagamentos}">
+                            <td th:text="${pagamento.id}"></td>
+                            <td th:text="${#temporals.format(pagamento.dataPagamento, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${#numbers.formatCurrency(pagamento.valorPago)}"></td>
+                            <td>
+                                <span th:class="${'badge ' + (pagamento.estado.name() == 'CONFIRMADO' ? 'badge-success' : 
+                                                         (pagamento.estado.name() == 'PENDENTE' ? 'badge-warning' : 'badge-danger'))}"
+                                      th:text="${pagamento.estado}">
+                                </span>
+                            </td>
+                            <td>
+                                <a th:href="@{/pagamentos/{id}/visualizar(id=${pagamento.id})}" class="btn-action btn-info">
+                                    <i class="fas fa-eye"></i> Visualizar
+                                </a>
+                                <a th:href="@{/pagamentos/{id}/editar(id=${pagamento.id})}" class="btn-action btn-warning">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
+
+        <a href="/cotas" class="btn-voltar">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
     </div>
 </body>
 </html> 

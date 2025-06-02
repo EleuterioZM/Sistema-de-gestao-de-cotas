@@ -4,44 +4,288 @@
     <title>Login - Sistema de Gestão de Cotas</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 480px;
+            overflow: hidden;
+        }
+
+        .login-header {
+            background-color: #2b6cb0;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 24px;
+            color: white;
+        }
+
+        .login-title {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .login-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.875rem;
+        }
+
+        .login-body {
+            padding: 30px;
+        }
+
+        .alert {
+            border: none;
+            border-radius: 4px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-danger {
+            background-color: #e53e3e;
+            color: white;
+        }
+
+        .alert-success {
+            background-color: #38a169;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2d3748;
+            font-size: 0.875rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2b6cb0;
+            box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.1);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            font-size: 16px;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background-color: #2b6cb0;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+        }
+
+        .btn-login:hover {
+            background-color: #2c5282;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .register-link a {
+            color: #2b6cb0;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #a0aec0;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0;
+            z-index: 2;
+        }
+
+        .password-toggle:hover {
+            color: #2b6cb0;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 640px) {
+            .login-container {
+                margin: 10px;
+            }
+            
+            .login-header {
+                padding: 25px;
+            }
+            
+            .login-body {
+                padding: 25px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header text-center">
-                        <h3>Sistema de Gestão de Cotas</h3>
-                    </div>
-                    <div class="card-body">
-                        <div th:if="${param.error}" class="alert alert-danger">
-                            Usuário ou senha inválidos.
-                        </div>
-                        <div th:if="${param.logout}" class="alert alert-success">
-                            Você foi desconectado.
-                        </div>
-                        <form th:action="@{/login}" method="post">
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="username" name="username" required autofocus>
-                            </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Senha</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
-                            </div>
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">Entrar</button>
-                            </div>
-                            <div class="text-center mt-3">
-                                <a href="/registro">Não tem uma conta? Registre-se</a>
-                            </div>
-                        </form>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="logo-icon">
+                <i class="fas fa-chart-pie"></i>
+            </div>
+            <h1 class="login-title">Bem-vindo de volta</h1>
+            <p class="login-subtitle">Sistema de Gestão de Cotas</p>
+        </div>
+        
+        <div class="login-body">
+            <div th:if="${param.error}" class="alert alert-danger">
+                <i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>
+                Usuário ou senha inválidos.
+            </div>
+            <div th:if="${param.logout}" class="alert alert-success">
+                <i class="fas fa-check-circle" style="margin-right: 8px;"></i>
+                Você foi desconectado com sucesso.
+            </div>
+            
+            <form th:action="@{/login}" method="post" id="loginForm">
+                <div class="form-group">
+                    <label for="username" class="form-label">Email</label>
+                    <div style="position: relative;">
+                        <input type="email" class="form-control" id="username" name="username" required autofocus placeholder="Digite seu email">
+                        <i class="fas fa-envelope input-icon"></i>
                     </div>
                 </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">Senha</label>
+                    <div style="position: relative;">
+                        <input type="password" class="form-control" id="password" name="password" required placeholder="Digite sua senha">
+                        <i class="fas fa-lock input-icon"></i>
+                        <button type="button" class="password-toggle" onclick="togglePassword()">
+                            <i class="fas fa-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-login" id="loginBtn">
+                    <div class="loading-spinner" id="loadingSpinner"></div>
+                    <span id="btnText">Entrar</span>
+                </button>
+            </form>
+            
+            <div class="register-link">
+                <a href="/registro">
+                    <i class="fas fa-user-plus" style="margin-right: 5px;"></i>
+                    Não tem uma conta? Registre-se
+                </a>
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function() {
+            const loginBtn = document.getElementById('loginBtn');
+            const btnText = document.getElementById('btnText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            
+            loginBtn.disabled = true;
+            loadingSpinner.style.display = 'inline-block';
+            btnText.textContent = 'Entrando...';
+        });
+    </script>
 </body>
 </html>

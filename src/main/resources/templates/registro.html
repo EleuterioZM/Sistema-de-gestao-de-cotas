@@ -4,48 +4,435 @@
     <title>Registro - Sistema de Gestão de Cotas</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .register-container {
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 520px;
+            overflow: hidden;
+        }
+
+        .register-header {
+            background-color: #2b6cb0;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 24px;
+            color: white;
+        }
+
+        .register-title {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .register-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.875rem;
+        }
+
+        .register-body {
+            padding: 30px;
+        }
+
+        .alert {
+            border: none;
+            border-radius: 4px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-danger {
+            background-color: #e53e3e;
+            color: white;
+        }
+
+        .alert-success {
+            background-color: #38a169;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2d3748;
+            font-size: 0.875rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2b6cb0;
+            box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.1);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            font-size: 16px;
+        }
+
+        .password-strength {
+            margin-top: 8px;
+            display: none;
+        }
+
+        .strength-bar {
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .strength-fill {
+            height: 100%;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .strength-text {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 12px;
+            background-color: #2b6cb0;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+        }
+
+        .btn-register:hover {
+            background-color: #2c5282;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .login-link a {
+            color: #2b6cb0;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #a0aec0;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0;
+            z-index: 2;
+        }
+
+        .password-toggle:hover {
+            color: #2b6cb0;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .form-validation {
+            font-size: 0.85rem;
+            margin-top: 5px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .form-validation.show {
+            opacity: 1;
+        }
+
+        .form-validation.valid {
+            color: #38a169;
+        }
+
+        .form-validation.invalid {
+            color: #e53e3e;
+        }
+
+        @media (max-width: 640px) {
+            .register-container {
+                margin: 10px;
+            }
+            
+            .register-header {
+                padding: 25px;
+            }
+            
+            .register-body {
+                padding: 25px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header text-center">
-                        <h3>Registro de Novo Usuário</h3>
+    <div class="register-container">
+        <div class="register-header">
+            <div class="logo-icon">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <h1 class="register-title">Criar Conta</h1>
+            <p class="register-subtitle">Sistema de Gestão de Cotas</p>
+        </div>
+        
+        <div class="register-body">
+            <div th:if="${param.success}" class="alert alert-success">
+                <i class="fas fa-check-circle" style="margin-right: 8px;"></i>
+                Registro realizado com sucesso! Por favor, faça o login.
+            </div>
+            <div th:if="${param.error}" class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>
+                Ocorreu um erro no registro. Por favor, tente novamente.
+            </div>
+            
+            <form th:action="@{/registro}" method="post" th:object="${usuario}" id="registerForm">
+                <div class="form-group">
+                    <label for="nome" class="form-label">Nome Completo</label>
+                    <div style="position: relative;">
+                        <input type="text" class="form-control" id="nome" th:field="*{nome}" required placeholder="Digite seu nome completo">
+                        <i class="fas fa-user input-icon"></i>
                     </div>
-                    <div class="card-body">
-                        <div th:if="${param.success}" class="alert alert-success">
-                            Registro realizado com sucesso! Por favor, faça o login.
+                    <div class="form-validation" id="nameValidation"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email" class="form-label">Email</label>
+                    <div style="position: relative;">
+                        <input type="email" class="form-control" id="email" th:field="*{email}" required placeholder="Digite seu email">
+                        <i class="fas fa-envelope input-icon"></i>
+                    </div>
+                    <div class="form-validation" id="emailValidation"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="senha" class="form-label">Senha</label>
+                    <div style="position: relative;">
+                        <input type="password" class="form-control" id="senha" th:field="*{senha}" required placeholder="Crie uma senha segura">
+                        <i class="fas fa-lock input-icon"></i>
+                        <button type="button" class="password-toggle" onclick="togglePassword()">
+                            <i class="fas fa-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                    <div class="password-strength" id="passwordStrength">
+                        <div class="strength-bar">
+                            <div class="strength-fill" id="strengthFill"></div>
                         </div>
-                        <div th:if="${param.error}" class="alert alert-danger">
-                            Ocorreu um erro no registro. Por favor, tente novamente.
-                        </div>
-                        <form th:action="@{/registro}" method="post" th:object="${usuario}">
-                            <div class="mb-3">
-                                <label for="nome" class="form-label">Nome</label>
-                                <input type="text" class="form-control" id="nome" th:field="*{nome}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" th:field="*{email}" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="senha" class="form-label">Senha</label>
-                                <input type="password" class="form-control" id="senha" th:field="*{senha}" required>
-                            </div>
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">Registrar</button>
-                            </div>
-                        </form>
-                        <div class="text-center mt-3">
-                            <a href="/login">Já tem uma conta? Faça login</a>
-                        </div>
+                        <div class="strength-text" id="strengthText"></div>
                     </div>
                 </div>
+                
+                <button type="submit" class="btn-register" id="registerBtn">
+                    <div class="loading-spinner" id="loadingSpinner"></div>
+                    <span id="btnText">Criar Conta</span>
+                </button>
+            </form>
+            
+            <div class="login-link">
+                <a href="/login">
+                    <i class="fas fa-sign-in-alt" style="margin-right: 5px;"></i>
+                    Já tem uma conta? Faça login
+                </a>
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('senha');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        function checkPasswordStrength(password) {
+            const strengthBar = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+            const strengthContainer = document.getElementById('passwordStrength');
+            
+            if (password.length === 0) {
+                strengthContainer.style.display = 'none';
+                return;
+            }
+            
+            strengthContainer.style.display = 'block';
+            
+            let strength = 0;
+            let feedback = '';
+            
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password)) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            
+            switch (strength) {
+                case 0:
+                case 1:
+                    strengthBar.style.width = '20%';
+                    strengthBar.style.background = '#e53e3e';
+                    strengthText.textContent = 'Muito fraca';
+                    strengthText.style.color = '#e53e3e';
+                    break;
+                case 2:
+                    strengthBar.style.width = '40%';
+                    strengthBar.style.background = '#dd6b20';
+                    strengthText.textContent = 'Fraca';
+                    strengthText.style.color = '#dd6b20';
+                    break;
+                case 3:
+                    strengthBar.style.width = '60%';
+                    strengthBar.style.background = '#d69e2e';
+                    strengthText.textContent = 'Média';
+                    strengthText.style.color = '#d69e2e';
+                    break;
+                case 4:
+                    strengthBar.style.width = '80%';
+                    strengthBar.style.background = '#2b6cb0';
+                    strengthText.textContent = 'Forte';
+                    strengthText.style.color = '#2b6cb0';
+                    break;
+                case 5:
+                    strengthBar.style.width = '100%';
+                    strengthBar.style.background = '#38a169';
+                    strengthText.textContent = 'Muito forte';
+                    strengthText.style.color = '#38a169';
+                    break;
+            }
+        }
+
+        document.getElementById('nome').addEventListener('input', function() {
+            const validation = document.getElementById('nameValidation');
+            if (this.value.length >= 2) {
+                validation.textContent = '✓ Nome válido';
+                validation.className = 'form-validation show valid';
+            } else if (this.value.length > 0) {
+                validation.textContent = '✗ Nome deve ter pelo menos 2 caracteres';
+                validation.className = 'form-validation show invalid';
+            } else {
+                validation.className = 'form-validation';
+            }
+        });
+
+        document.getElementById('email').addEventListener('input', function() {
+            const validation = document.getElementById('emailValidation');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (emailRegex.test(this.value)) {
+                validation.textContent = '✓ Email válido';
+                validation.className = 'form-validation show valid';
+            } else if (this.value.length > 0) {
+                validation.textContent = '✗ Email inválido';
+                validation.className = 'form-validation show invalid';
+            } else {
+                validation.className = 'form-validation';
+            }
+        });
+
+        document.getElementById('senha').addEventListener('input', function() {
+            checkPasswordStrength(this.value);
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', function() {
+            const registerBtn = document.getElementById('registerBtn');
+            const btnText = document.getElementById('btnText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            
+            registerBtn.disabled = true;
+            loadingSpinner.style.display = 'inline-block';
+            btnText.textContent = 'Criando conta...';
+        });
+    </script>
 </body>
 </html>
