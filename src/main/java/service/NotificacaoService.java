@@ -19,7 +19,7 @@ public class NotificacaoService {
         return notificacaoRepository.findAll();
     }
 
-    public List<Notificacao> listarPorEntidade(Long entidadeId) {
+    public List<Notificacao> listarPorEntidade(Integer entidadeId) {
         return notificacaoRepository.findByEntidadeId(entidadeId);
     }
 
@@ -27,11 +27,11 @@ public class NotificacaoService {
         return notificacaoRepository.findByLidaFalse();
     }
 
-    public List<Notificacao> listarNaoLidasPorEntidade(Long entidadeId) {
+    public List<Notificacao> listarNaoLidasPorEntidade(Integer entidadeId) {
         return notificacaoRepository.findByEntidadeIdAndLidaFalse(entidadeId);
     }
 
-    public Notificacao buscarPorId(Long id) {
+    public Notificacao buscarPorId(Integer id) {
         return notificacaoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Notificação não encontrada"));
     }
@@ -44,13 +44,13 @@ public class NotificacaoService {
         return notificacaoRepository.save(notificacao);
     }
 
-    public void marcarComoLida(Long id) {
+    public void marcarComoLida(Integer id) {
         Notificacao notificacao = buscarPorId(id);
         notificacao.setLida(true);
         notificacaoRepository.save(notificacao);
     }
 
-    public void marcarTodasComoLidas(Long entidadeId) {
+    public void marcarTodasComoLidas(Integer entidadeId) {
         List<Notificacao> notificacoes = listarNaoLidasPorEntidade(entidadeId);
         notificacoes.forEach(notificacao -> {
             notificacao.setLida(true);
@@ -58,7 +58,7 @@ public class NotificacaoService {
         });
     }
 
-    public void deletar(Long id) {
+    public void deletar(Integer id) {
         notificacaoRepository.deleteById(id);
     }
 

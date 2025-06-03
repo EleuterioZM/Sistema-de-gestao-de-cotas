@@ -7,8 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface NotificacaoRepository extends JpaRepository<Notificacao, Long> {
-    List<Notificacao> findByEntidadeId(Long entidadeId);
+public interface NotificacaoRepository extends JpaRepository<Notificacao, Integer> {
+    List<Notificacao> findByEntidadeId(Integer entidadeId);
     List<Notificacao> findByLidaFalse();
-    List<Notificacao> findByEntidadeIdAndLidaFalse(Long entidadeId);
+    List<Notificacao> findByEntidadeIdAndLidaFalse(Integer entidadeId);
 }
