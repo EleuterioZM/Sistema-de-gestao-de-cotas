@@ -162,9 +162,124 @@
                 gap: 30px;
             }
         }
+
+        .user-menu {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .user-menu-button {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 8px 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-menu-button:hover {
+            border-color: #2b6cb0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background-color: #2b6cb0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-name {
+            color: #2d3748;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 5px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: none;
+            min-width: 200px;
+        }
+
+        .user-dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #4a5568;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f7fafc;
+            color: #2b6cb0;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #e2e8f0;
+            margin: 5px 0;
+        }
+
+        @media (max-width: 768px) {
+            .user-menu {
+                top: 10px;
+                right: 10px;
+            }
+            
+            .user-name {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="user-menu">
+        <button class="user-menu-button" onclick="toggleDropdown()">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <span class="user-name" th:text="${#authentication != null ? #authentication.principal.nome : 'Usuário'}">Nome do Usuário</span>
+            <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="user-dropdown" id="userDropdown">
+            <a href="/usuarios/visualizar" class="dropdown-item">
+                <i class="fas fa-user-cog"></i>
+                Meu Perfil
+            </a>
+            <div class="dropdown-divider"></div>
+            <form th:action="@{/logout}" method="post" style="margin: 0;">
+                <button type="submit" class="dropdown-item" style="width: 100%; text-align: left; border: none; background: none; cursor: pointer;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Sair
+                </button>
+            </form>
+        </div>
+    </div>
+
     <div class="container">
         <div class="header">
             <h1 class="main-title">Sistema de Gestão de Cotas</h1>
@@ -242,5 +357,22 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Fechar o dropdown quando clicar fora
+        window.onclick = function(event) {
+            if (!event.target.matches('.user-menu-button') && !event.target.matches('.user-menu-button *')) {
+                const dropdown = document.getElementById('userDropdown');
+                if (dropdown.classList.contains('show')) {
+                    dropdown.classList.remove('show');
+                }
+            }
+        }
+    </script>
 </body>
 </html>

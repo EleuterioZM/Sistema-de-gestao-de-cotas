@@ -3,19 +3,21 @@ package controller;
 import model.Usuario;
 import model.Entidade;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import service.UsuarioService;
 import service.EntidadeService;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequestMapping("/usuarios")
+@RequiredArgsConstructor
 public class UsuarioController {
 
-    @Autowired
-    private UsuarioService usuarioService;
+    private final UsuarioService usuarioService;
 
     @Autowired
     private EntidadeService entidadeService;
@@ -63,5 +65,12 @@ public class UsuarioController {
     public String excluirUsuario(@RequestParam Integer id) {
         usuarioService.deletar(id);
         return "redirect:/usuarios";
+    }
+
+    @GetMapping("/visualizar")
+    public String visualizarPerfil(Authentication authentication, Model model) {
+        String email = authentication.getName();
+        model.addAttribute("usuario", usuarioService.buscarPorEmail(email));
+        return "usuarios/visualizar";
     }
 }

@@ -2,6 +2,7 @@ package service;
 
 import lombok.RequiredArgsConstructor;
 import model.Usuario;
+import model.UsuarioDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,12 +34,16 @@ public class UsuarioService implements UserDetailsService {
             perfil = Usuario.Perfil.visualizador; // Default profile
         }
 
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(usuario.getEmail())
-                .password(usuario.getSenha())
-                .authorities(Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + perfil.name().toUpperCase())))
-                .disabled(!usuario.getAtivo())
-                .build();
+        return new UsuarioDetails(
+            usuario.getEmail(),
+            usuario.getSenha(),
+            usuario.getAtivo(),
+            true, // accountNonExpired
+            true, // credentialsNonExpired
+            true, // accountNonLocked
+            Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + perfil.name().toUpperCase())),
+            usuario.getNome()
+        );
     }
 
     public Usuario salvar(Usuario usuario) {
@@ -78,5 +83,10 @@ public class UsuarioService implements UserDetailsService {
 
     public boolean existeEmail(String email) {
         return usuarioRepository.existsByEmail(email);
+    }
+
+    public Usuario buscarPorEmail(String email) {
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
     }
 }

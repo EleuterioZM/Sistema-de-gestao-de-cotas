@@ -16,8 +16,9 @@ public class NotificacaoInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
-        if (modelAndView != null) {
-            modelAndView.addObject("notificacoesNaoLidas", notificacaoService.listarNaoLidas());
+        if (modelAndView != null && !request.getRequestURI().startsWith("/api/")) {
+            // Adiciona as notificações apenas para páginas que não são APIs
+            modelAndView.addObject("notificacoes", notificacaoService.listarNaoLidas());
         }
     }
 } 

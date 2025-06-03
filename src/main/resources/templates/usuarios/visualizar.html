@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Meu Perfil</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .card {
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .info-label {
+            font-weight: 500;
+            color: #495057;
+        }
+        .info-value {
+            color: #212529;
+        }
+        .btn-voltar {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">Meu Perfil</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <strong class="info-label">Nome Completo:</strong>
+                            </div>
+                            <div class="col-md-8">
+                                <span class="info-value" th:text="${usuario.nome}"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <strong class="info-label">Email:</strong>
+                            </div>
+                            <div class="col-md-8">
+                                <span class="info-value" th:text="${usuario.email}"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <strong class="info-label">Perfil:</strong>
+                            </div>
+                            <div class="col-md-8">
+                                <span class="info-value" th:text="${usuario.perfil != null ? #strings.capitalize(usuario.perfil.name()) : 'Não definido'}"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <strong class="info-label">Status:</strong>
+                            </div>
+                            <div class="col-md-8">
+                                <span class="info-value" th:text="${usuario.ativo != null && usuario.ativo ? 'Ativo' : 'Inativo'}"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <strong class="info-label">Entidade:</strong>
+                            </div>
+                            <div class="col-md-8">
+                                <span class="info-value" th:text="${usuario.entidade != null ? usuario.entidade.nome : 'Não vinculado'}"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <strong class="info-label">Último Login:</strong>
+                            </div>
+                            <div class="col-md-8">
+                                <span class="info-value" th:text="${usuario.ultimoLogin != null ? #temporals.format(usuario.ultimoLogin, 'dd/MM/yyyy HH:mm') : 'Nunca'}"></span>
+                            </div>
+                        </div>
+                        <div class="text-center btn-voltar">
+                            <a href="javascript:history.back()" class="btn btn-warning">
+                                <i class="bi bi-arrow-left"></i> Voltar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
