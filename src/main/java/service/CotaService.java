@@ -23,7 +23,7 @@ public class CotaService {
         return cotaRepository.findAll();
     }
 
-    public Cota buscarPorId(Long id) {
+    public Cota buscarPorId(Integer id) {
         return cotaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cota não encontrada"));
     }
@@ -58,7 +58,7 @@ public class CotaService {
         return cotaSalva;
     }
 
-    public void deletar(Long id) {
+    public void deletar(Integer id) {
         cotaRepository.deleteById(id);
     }
 }

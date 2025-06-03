@@ -52,7 +52,7 @@ public class CotaController {
     }
 
     @GetMapping("/{id}/editar")
-    public String editarCota(@PathVariable Long id, Model model) {
+    public String editarCota(@PathVariable Integer id, Model model) {
         try {
             model.addAttribute("cota", cotaService.buscarPorId(id));
             model.addAttribute("entidades", entidadeService.listarTodos());
@@ -75,7 +75,7 @@ public class CotaController {
 
     @DeleteMapping("/{id}")
     @ResponseBody
-    public String deletarCota(@PathVariable Long id) {
+    public String deletarCota(@PathVariable Integer id) {
         try {
             cotaService.deletar(id);
             return "Cota excluída com sucesso";
@@ -85,7 +85,7 @@ public class CotaController {
     }
 
     @GetMapping("/{id}/visualizar")
-    public String visualizar(@PathVariable Long id, Model model) {
+    public String visualizar(@PathVariable Integer id, Model model) {
         try {
             model.addAttribute("cota", cotaService.buscarPorId(id));
             return "cota/visualizar";
