@@ -11,14 +11,21 @@ import com.itextpdf.layout.properties.UnitValue;
 import lombok.RequiredArgsConstructor;
 import model.Cota;
 import model.Pagamento;
+import model.Usuario;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import repository.PagamentoRepository;
+import repository.UsuarioRepository;
+import repository.CotaRepository;
 
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,197 +33,197 @@ public class RelatorioService {
     private final CotaService cotaService;
     private final PagamentoService pagamentoService;
 
-    public byte[] gerarRelatorioCotasPDF() {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        
-        try {
-            PdfWriter writer = new PdfWriter(out);
+    @Autowired
+    private PagamentoRepository pagamentoRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private CotaRepository cotaRepository;
+
+    public byte[] gerarRelatorioPagamentos(LocalDateTime dataInicio, LocalDateTime dataFim) {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            PdfWriter writer = new PdfWriter(baos);
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf);
 
             // Título
-            Paragraph title = new Paragraph("Relatório de Cotas")
-                .setTextAlignment(TextAlignment.CENTER)
-                .setFontSize(18)
-                .setBold();
-            document.add(title);
+            Paragraph titulo = new Paragraph("Relatório de Pagamentos")
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setFontSize(20)
+                    .setBold();
+            document.add(titulo);
 
-            // Data de geração
-            Paragraph date = new Paragraph("Gerado em: " + 
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")))
-                .setTextAlignment(TextAlignment.RIGHT)
-                .setFontSize(10);
-            document.add(date);
+            // Período
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+            Paragraph periodo = new Paragraph(
+                    String.format("Período: %s a %s",
+                            dataInicio.format(formatter),
+                            dataFim.format(formatter)))
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setFontSize(12);
+            document.add(periodo);
 
-            // Tabela
-            Table table = new Table(UnitValue.createPercentArray(5)).useAllAvailableWidth();
-
-            // Cabeçalho
-            String[] headers = {"ID", "Nome", "Entidade", "Valor", "Status"};
-            for (String header : headers) {
-                table.addHeaderCell(new Cell().add(new Paragraph(header).setBold()));
-            }
-
-            // Dados
-            List<Cota> cotas = cotaService.listarTodos();
-            for (Cota cota : cotas) {
-                table.addCell(new Cell().add(new Paragraph(String.valueOf(cota.getId()))));
-                table.addCell(new Cell().add(new Paragraph(cota.getNome())));
-                table.addCell(new Cell().add(new Paragraph(cota.getEntidade().getNome())));
-                table.addCell(new Cell().add(new Paragraph(String.format("R$ %.2f", cota.getValor()))));
-                table.addCell(new Cell().add(new Paragraph(cota.getStatus().toString())));
-            }
-
-            document.add(table);
-            document.close();
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao gerar relatório PDF", e);
-        }
-
-        return out.toByteArray();
-    }
-
-    public byte[] gerarRelatorioPagamentosPDF() {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        
-        try {
-            PdfWriter writer = new PdfWriter(out);
-            PdfDocument pdf = new PdfDocument(writer);
-            Document document = new Document(pdf);
-
-            // Título
-            Paragraph title = new Paragraph("Relatório de Pagamentos")
-                .setTextAlignment(TextAlignment.CENTER)
-                .setFontSize(18)
-                .setBold();
-            document.add(title);
-
-            // Data de geração
-            Paragraph date = new Paragraph("Gerado em: " + 
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")))
-                .setTextAlignment(TextAlignment.RIGHT)
-                .setFontSize(10);
-            document.add(date);
-
-            // Tabela
-            Table table = new Table(UnitValue.createPercentArray(6)).useAllAvailableWidth();
+            // Tabela de pagamentos
+            Table table = new Table(UnitValue.createPercentArray(new float[]{10, 20, 20, 15, 15, 20}))
+                    .useAllAvailableWidth();
 
             // Cabeçalho
-            String[] headers = {"ID", "Cota", "Data", "Valor", "Método", "Status"};
-            for (String header : headers) {
-                table.addHeaderCell(new Cell().add(new Paragraph(header).setBold()));
-            }
+            table.addHeaderCell(new Cell().add(new Paragraph("ID")));
+            table.addHeaderCell(new Cell().add(new Paragraph("Usuário")));
+            table.addHeaderCell(new Cell().add(new Paragraph("Cota")));
+            table.addHeaderCell(new Cell().add(new Paragraph("Data")));
+            table.addHeaderCell(new Cell().add(new Paragraph("Valor")));
+            table.addHeaderCell(new Cell().add(new Paragraph("Status")));
 
             // Dados
-            List<Pagamento> pagamentos = pagamentoService.listarTodos();
+            List<Pagamento> pagamentos = pagamentoRepository.findByDataPagamentoBetween(dataInicio, dataFim);
             for (Pagamento pagamento : pagamentos) {
-                table.addCell(new Cell().add(new Paragraph(String.valueOf(pagamento.getId()))));
+                table.addCell(new Cell().add(new Paragraph(pagamento.getId().toString())));
+                table.addCell(new Cell().add(new Paragraph(pagamento.getUsuario().getNome())));
                 table.addCell(new Cell().add(new Paragraph(pagamento.getCota().getNome())));
-                table.addCell(new Cell().add(new Paragraph(pagamento.getDataPagamento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))));
-                table.addCell(new Cell().add(new Paragraph(String.format("R$ %.2f", pagamento.getValorPago()))));
-                table.addCell(new Cell().add(new Paragraph(pagamento.getMetodoPagamento().toString())));
-                table.addCell(new Cell().add(new Paragraph(pagamento.getEstado().toString())));
+                table.addCell(new Cell().add(new Paragraph(pagamento.getDataPagamento().format(formatter))));
+                table.addCell(new Cell().add(new Paragraph(String.format("R$ %.2f", pagamento.getValor()))));
+                table.addCell(new Cell().add(new Paragraph(pagamento.getStatus().toString())));
+            }
+
+            document.add(table);
+
+            // Totais
+            double totalPago = pagamentos.stream()
+                    .filter(p -> p.getStatus() == Pagamento.Status.CONFIRMADO)
+                    .mapToDouble(Pagamento::getValor)
+                    .sum();
+
+            double totalPendente = pagamentos.stream()
+                    .filter(p -> p.getStatus() == Pagamento.Status.PENDENTE)
+                    .mapToDouble(Pagamento::getValor)
+                    .sum();
+
+            Paragraph totais = new Paragraph()
+                    .add(new Paragraph(String.format("Total Pago: R$ %.2f", totalPago)))
+                    .add(new Paragraph(String.format("Total Pendente: R$ %.2f", totalPendente)))
+                    .setTextAlignment(TextAlignment.RIGHT)
+                    .setFontSize(12);
+            document.add(totais);
+
+            document.close();
+            return baos.toByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao gerar relatório", e);
+        }
+    }
+
+    public byte[] gerarRelatorioUsuarios() {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            PdfWriter writer = new PdfWriter(baos);
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf);
+
+            // Título
+            Paragraph titulo = new Paragraph("Relatório de Usuários")
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setFontSize(20)
+                    .setBold();
+            document.add(titulo);
+
+            // Tabela de usuários
+            Table table = new Table(UnitValue.createPercentArray(new float[]{20, 20, 20, 20, 20}))
+                    .useAllAvailableWidth();
+
+            // Cabeçalho
+            table.addHeaderCell(new Cell().add(new Paragraph("Nome")));
+            table.addHeaderCell(new Cell().add(new Paragraph("Email")));
+            table.addHeaderCell(new Cell().add(new Paragraph("Total Pago")));
+            table.addHeaderCell(new Cell().add(new Paragraph("Total Pendente")));
+            table.addHeaderCell(new Cell().add(new Paragraph("Status")));
+
+            // Dados
+            List<Usuario> usuarios = usuarioRepository.findAll();
+            for (Usuario usuario : usuarios) {
+                List<Pagamento> pagamentos = pagamentoRepository.findByUsuario(usuario);
+                
+                double totalPago = pagamentos.stream()
+                        .filter(p -> p.getStatus() == Pagamento.Status.CONFIRMADO)
+                        .mapToDouble(Pagamento::getValor)
+                        .sum();
+
+                double totalPendente = pagamentos.stream()
+                        .filter(p -> p.getStatus() == Pagamento.Status.PENDENTE)
+                        .mapToDouble(Pagamento::getValor)
+                        .sum();
+
+                String status = totalPendente > 0 ? "Pendente" : "Em dia";
+
+                table.addCell(new Cell().add(new Paragraph(usuario.getNome())));
+                table.addCell(new Cell().add(new Paragraph(usuario.getEmail())));
+                table.addCell(new Cell().add(new Paragraph(String.format("R$ %.2f", totalPago))));
+                table.addCell(new Cell().add(new Paragraph(String.format("R$ %.2f", totalPendente))));
+                table.addCell(new Cell().add(new Paragraph(status)));
             }
 
             document.add(table);
             document.close();
+            return baos.toByteArray();
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao gerar relatório PDF", e);
+            throw new RuntimeException("Erro ao gerar relatório", e);
         }
-
-        return out.toByteArray();
     }
 
-    public byte[] gerarRelatorioCotasExcel() {
-        try (Workbook workbook = new XSSFWorkbook()) {
-            Sheet sheet = workbook.createSheet("Cotas");
+    public byte[] gerarRelatorioCotas() {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            PdfWriter writer = new PdfWriter(baos);
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf);
 
-            // Estilo para cabeçalho
-            CellStyle headerStyle = workbook.createCellStyle();
-            headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-            Font headerFont = workbook.createFont();
-            headerFont.setBold(true);
-            headerStyle.setFont(headerFont);
+            // Título
+            Paragraph titulo = new Paragraph("Relatório de Cotas")
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setFontSize(20)
+                    .setBold();
+            document.add(titulo);
+
+            // Tabela de cotas
+            Table table = new Table(UnitValue.createPercentArray(new float[]{20, 20, 20, 20, 20}))
+                    .useAllAvailableWidth();
 
             // Cabeçalho
-            Row headerRow = sheet.createRow(0);
-            String[] headers = {"ID", "Nome", "Entidade", "Valor", "Status"};
-            for (int i = 0; i < headers.length; i++) {
-                org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
-                cell.setCellValue(headers[i]);
-                cell.setCellStyle(headerStyle);
-            }
+            table.addHeaderCell(new Cell().add(new Paragraph("Nome")));
+            table.addHeaderCell(new Cell().add(new Paragraph("Valor")));
+            table.addHeaderCell(new Cell().add(new Paragraph("Total Pago")));
+            table.addHeaderCell(new Cell().add(new Paragraph("Total Pendente")));
+            table.addHeaderCell(new Cell().add(new Paragraph("Status")));
 
             // Dados
-            List<Cota> cotas = cotaService.listarTodos();
-            int rowNum = 1;
+            List<Cota> cotas = cotaRepository.findAll();
             for (Cota cota : cotas) {
-                Row row = sheet.createRow(rowNum++);
-                row.createCell(0).setCellValue(cota.getId());
-                row.createCell(1).setCellValue(cota.getNome());
-                row.createCell(2).setCellValue(cota.getEntidade().getNome());
-                row.createCell(3).setCellValue(cota.getValor());
-                row.createCell(4).setCellValue(cota.getStatus().toString());
+                List<Pagamento> pagamentos = pagamentoRepository.findByCota(cota);
+                
+                double totalPago = pagamentos.stream()
+                        .filter(p -> p.getStatus() == Pagamento.Status.CONFIRMADO)
+                        .mapToDouble(Pagamento::getValor)
+                        .sum();
+
+                double totalPendente = pagamentos.stream()
+                        .filter(p -> p.getStatus() == Pagamento.Status.PENDENTE)
+                        .mapToDouble(Pagamento::getValor)
+                        .sum();
+
+                String status = totalPendente > 0 ? "Pendente" : "Em dia";
+
+                table.addCell(new Cell().add(new Paragraph(cota.getNome())));
+                table.addCell(new Cell().add(new Paragraph(String.format("R$ %.2f", cota.getValor()))));
+                table.addCell(new Cell().add(new Paragraph(String.format("R$ %.2f", totalPago))));
+                table.addCell(new Cell().add(new Paragraph(String.format("R$ %.2f", totalPendente))));
+                table.addCell(new Cell().add(new Paragraph(status)));
             }
 
-            // Ajustar largura das colunas
-            for (int i = 0; i < headers.length; i++) {
-                sheet.autoSizeColumn(i);
-            }
-
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            workbook.write(out);
-            return out.toByteArray();
+            document.add(table);
+            document.close();
+            return baos.toByteArray();
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao gerar relatório Excel", e);
-        }
-    }
-
-    public byte[] gerarRelatorioPagamentosExcel() {
-        try (Workbook workbook = new XSSFWorkbook()) {
-            Sheet sheet = workbook.createSheet("Pagamentos");
-
-            // Estilo para cabeçalho
-            CellStyle headerStyle = workbook.createCellStyle();
-            headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-            Font headerFont = workbook.createFont();
-            headerFont.setBold(true);
-            headerStyle.setFont(headerFont);
-
-            // Cabeçalho
-            Row headerRow = sheet.createRow(0);
-            String[] headers = {"ID", "Cota", "Data", "Valor", "Método", "Status"};
-            for (int i = 0; i < headers.length; i++) {
-                org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
-                cell.setCellValue(headers[i]);
-                cell.setCellStyle(headerStyle);
-            }
-
-            // Dados
-            List<Pagamento> pagamentos = pagamentoService.listarTodos();
-            int rowNum = 1;
-            for (Pagamento pagamento : pagamentos) {
-                Row row = sheet.createRow(rowNum++);
-                row.createCell(0).setCellValue(pagamento.getId());
-                row.createCell(1).setCellValue(pagamento.getCota().getNome());
-                row.createCell(2).setCellValue(pagamento.getDataPagamento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-                row.createCell(3).setCellValue(pagamento.getValorPago());
-                row.createCell(4).setCellValue(pagamento.getMetodoPagamento().toString());
-                row.createCell(5).setCellValue(pagamento.getEstado().toString());
-            }
-
-            // Ajustar largura das colunas
-            for (int i = 0; i < headers.length; i++) {
-                sheet.autoSizeColumn(i);
-            }
-
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            workbook.write(out);
-            return out.toByteArray();
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao gerar relatório Excel", e);
+            throw new RuntimeException("Erro ao gerar relatório", e);
         }
     }
 }

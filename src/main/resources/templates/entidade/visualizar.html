@@ -2,6 +2,27 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Detalhes da Entidade</title>
+    <style>
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: white;
+        }
+
+        .badge-warning {
+            background-color: #ecc94b;
+        }
+
+        .badge-success {
+            background-color: #48bb78;
+        }
+
+        .badge-danger {
+            background-color: #f56565;
+        }
+    </style>
 </head>
 <body>
     <div th:fragment="content">

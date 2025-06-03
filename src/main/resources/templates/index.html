@@ -1,1 +1,5 @@
- 
+                        <td>
+                            <span th:class="${'badge ' + (cota.status == null ? 'badge-danger' : (cota.status.name() == 'paga' ? 'badge-success' : (cota.status.name() == 'pendente' ? 'badge-warning' : 'badge-danger')))}"
+                                  th:text="${cota.status != null ? cota.status : 'Desconhecido'}">
+                            </span>
+                        </td> 

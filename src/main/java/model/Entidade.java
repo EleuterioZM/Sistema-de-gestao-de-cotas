@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.ToString;
 
 @Data
 @NoArgsConstructor
@@ -28,15 +29,19 @@ public class Entidade {
     @Column(name = "data_criacao")
     private LocalDateTime dataCriacao;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "entidade")
     private List<Usuario> usuarios;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "entidade")
     private List<Cota> cotas;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "entidade")
     private List<Notificacao> notificacoes;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "entidade")
     private List<Relatorio> relatorios;
 }

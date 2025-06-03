@@ -216,14 +216,10 @@
                 <div class="form-group">
                     <label for="status" class="form-label">Status</label>
                     <select class="form-control" id="status" th:field="*{status}">
-                        <option value="PENDENTE" class="status-option">
-                            Pendente <span class="badge badge-warning">PENDENTE</span>
-                        </option>
-                        <option value="PAGA" class="status-option">
-                            Paga <span class="badge badge-success">PAGA</span>
-                        </option>
-                        <option value="VENCIDA" class="status-option">
-                            Vencida <span class="badge badge-danger">VENCIDA</span>
+                        <option value="">Selecione um status</option>
+                        <option th:each="status : ${T(model.Cota.Status).values()}" 
+                                th:value="${status}" 
+                                th:text="${status}">
                         </option>
                     </select>
                     <div class="form-text">Status atual da cota</div>

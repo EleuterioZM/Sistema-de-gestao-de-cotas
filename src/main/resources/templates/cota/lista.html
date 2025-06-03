@@ -39,30 +39,11 @@
             color: #1a202c;
         }
 
-        .btn-novo {
-            background-color: #2b6cb0;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .btn-novo:hover {
-            background-color: #2c5282;
-            color: white;
-        }
-
         .table-container {
             background: white;
             border-radius: 4px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
         }
 
         .table {
@@ -93,33 +74,30 @@
             background-color: #f7fafc;
         }
 
-        .btn-action {
-            padding: 6px 12px;
+        .btn-novo {
+            background-color: #28a745;
+            border: none;
+            color: white;
+            padding: 10px 20px;
             border-radius: 4px;
             font-weight: 500;
             transition: all 0.2s ease;
             text-decoration: none;
-            margin-right: 8px;
-            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            margin-right: 20px;
+            float: right;
         }
 
-        .btn-editar {
-            background-color: #4299e1;
-            color: white;
-        }
-
-        .btn-excluir {
-            background-color: #e53e3e;
-            color: white;
-        }
-
-        .btn-action:hover {
-            opacity: 0.9;
+        .btn-novo:hover {
+            background-color: #218838;
             color: white;
         }
 
         .btn-voltar {
-            background-color: #718096;
+            background-color: #ffc107;
             color: white;
             padding: 10px 20px;
             border-radius: 4px;
@@ -134,8 +112,8 @@
         }
 
         .btn-voltar:hover {
-            background-color: #4a5568;
-            color: white;
+            background-color: #e0a800;
+            color: #000;
         }
 
         .actions-cell {
@@ -151,17 +129,17 @@
 
         .badge-warning {
             background-color: #ecc94b;
-            color: #744210;
+            color: white;
         }
 
         .badge-success {
             background-color: #48bb78;
-            color: #22543d;
+            color: white;
         }
 
         .badge-danger {
             background-color: #f56565;
-            color: #742a2a;
+            color: white;
         }
 
         /* Estilos da Modal */
@@ -208,7 +186,7 @@
         }
 
         .btn-cancel {
-            background-color: #718096;
+            background-color: #ffc107;
             color: white;
             padding: 8px 16px;
             border-radius: 4px;
@@ -231,6 +209,37 @@
 
         .btn-cancel:hover, .btn-confirm:hover {
             opacity: 0.9;
+        }
+
+        .btn-action {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            margin-right: 8px;
+            font-size: 0.875rem;
+            border: none;
+        }
+
+        .btn-editar {
+            background-color: #4299e1;
+            color: white;
+        }
+
+        .btn-visualizar {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-excluir {
+            background-color: #e53e3e;
+            color: white;
+        }
+
+        .btn-action:hover {
+            opacity: 0.9;
+            color: white;
         }
     </style>
 </head>
@@ -266,13 +275,12 @@
                         <td th:text="${cota.entidade.nome}"></td>
                         <td th:text="${#numbers.formatCurrency(cota.valor)}"></td>
                         <td>
-                            <span th:class="${'badge ' + (cota.status.name() == 'PAGA' ? 'badge-success' : 
-                                                      (cota.status.name() == 'PENDENTE' ? 'badge-warning' : 'badge-danger'))}"
-                                  th:text="${cota.status}">
+                            <span th:class="${'badge ' + (cota.status == null ? 'badge-danger' : (cota.status.name() == 'paga' ? 'badge-success' : (cota.status.name() == 'pendente' ? 'badge-warning' : 'badge-danger')))}"
+                                  th:text="${cota.status != null ? cota.status : 'Desconhecido'}">
                             </span>
                         </td>
                         <td class="actions-cell">
-                            <a th:href="@{/cotas/{id}/visualizar(id=${cota.id})}" class="btn-action btn-editar">
+                            <a th:href="@{/cotas/{id}/visualizar(id=${cota.id})}" class="btn-action btn-visualizar">
                                 <i class="fas fa-eye"></i> 
                             </a>
                             <a th:href="@{/cotas/{id}/editar(id=${cota.id})}" class="btn-action btn-editar">

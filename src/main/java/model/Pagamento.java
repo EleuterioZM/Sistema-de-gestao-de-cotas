@@ -12,13 +12,17 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "pagamentos")
 public class Pagamento {
-    public enum Estado {
-        confirmado, pendente, falhado
+    public enum Status {
+        CONFIRMADO, PENDENTE, FALHADO
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 
     @ManyToOne
     @JoinColumn(name = "cota_id")
@@ -27,18 +31,12 @@ public class Pagamento {
     @Column(name = "data_pagamento")
     private LocalDateTime dataPagamento;
 
-    @Column(name = "valor_pago")
-    private Double valorPago;
-
-    @Column(name = "metodo_pagamento")
-    private String metodoPagamento;
-
-    @Column(name = "comprovativo_url")
-    private String comprovativoUrl;
+    @Column(name = "valor")
+    private Double valor;
 
     @Enumerated(EnumType.STRING)
-    private Estado estado;
+    private Status status;
 
-    @Column(name = "referencia_bancaria")
-    private String referenciaBancaria;
+    @Column(columnDefinition = "TEXT")
+    private String observacao;
 }
