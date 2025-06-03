@@ -21,6 +21,11 @@ public class RelatorioController {
     @Autowired
     private RelatorioService relatorioService;
 
+    @GetMapping
+    public String listar() {
+        return "relatorio/lista";
+    }
+
     @GetMapping("/cotas")
     public ResponseEntity<ByteArrayResource> gerarRelatorioCotas() {
         byte[] relatorio = relatorioService.gerarRelatorioCotas();
