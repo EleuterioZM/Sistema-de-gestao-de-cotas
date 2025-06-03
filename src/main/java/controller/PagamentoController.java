@@ -29,9 +29,21 @@ public class PagamentoController {
     private CotaRepository cotaRepository;
 
     @GetMapping
-    public String listar(Model model) {
-        List<Pagamento> pagamentos = pagamentoRepository.findAllWithUsuarioAndCota();
-        model.addAttribute("pagamentos", pagamentos);
+    public String listar(Model model, @RequestParam(defaultValue = "1") int page) {
+        int pageSize = 10;
+        List<Pagamento> todosPagamentos = pagamentoRepository.findAllWithUsuarioAndCota();
+        int totalItems = todosPagamentos.size();
+        int totalPages = (int) Math.ceil((double) totalItems / pageSize);
+        
+        int startIndex = (page - 1) * pageSize;
+        int endIndex = Math.min(startIndex + pageSize, totalItems);
+        
+        List<Pagamento> pagamentosPagina = todosPagamentos.subList(startIndex, endIndex);
+        
+        model.addAttribute("pagamentos", pagamentosPagina);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        
         return "pagamento/lista";
     }
 

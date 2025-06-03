@@ -41,9 +41,9 @@
 
         .card {
             background: white;
-            border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
         }
 
         .card-header {
@@ -64,24 +64,25 @@
 
         .info-row {
             display: flex;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
+            align-items: flex-start;
         }
 
         .info-label {
+            width: 150px;
             font-weight: 500;
             color: #4a5568;
-            width: 150px;
         }
 
         .info-value {
-            color: #2d3748;
             flex: 1;
+            color: #2d3748;
         }
 
         .btn-group {
             display: flex;
             gap: 12px;
-            margin-top: 20px;
+            margin-top: 24px;
         }
 
         .btn {
@@ -103,8 +104,8 @@
             color: white;
         }
 
-        .btn-secondary {
-            background-color: #718096;
+        .btn-warning {
+            background-color: #ffc107;
             color: white;
         }
 
@@ -117,21 +118,19 @@
             border-radius: 4px;
             font-size: 0.75rem;
             font-weight: 500;
-        }
-
-        .badge-success {
-            background-color: #48bb78;
-            color: #22543d;
+            color: white;
         }
 
         .badge-warning {
             background-color: #ecc94b;
-            color: #744210;
+        }
+
+        .badge-success {
+            background-color: #48bb78;
         }
 
         .badge-danger {
             background-color: #f56565;
-            color: #742a2a;
         }
     </style>
 </head>
@@ -186,7 +185,7 @@
             <a th:href="@{/pagamentos/{id}/editar(id=${pagamento.id})}" class="btn btn-primary">
                 <i class="fas fa-edit"></i> Editar
             </a>
-            <a href="/pagamentos" class="btn btn-secondary">
+            <a href="/pagamentos" class="btn btn-warning">
                 <i class="fas fa-arrow-left"></i> Voltar
             </a>
         </div>

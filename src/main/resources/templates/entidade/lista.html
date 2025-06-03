@@ -219,6 +219,42 @@
         .btn-cancel:hover, .btn-confirm:hover {
             opacity: 0.9;
         }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .page-item {
+            list-style: none;
+        }
+
+        .page-link {
+            padding: 8px 12px;
+            border-radius: 4px;
+            background-color: white;
+            color: #4a5568;
+            text-decoration: none;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+
+        .page-link:hover {
+            background-color: #f7fafc;
+        }
+
+        .page-item.active .page-link {
+            background-color: #4299e1;
+            color: white;
+            border-color: #4299e1;
+        }
+
+        .page-item.disabled .page-link {
+            color: #a0aec0;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -235,7 +271,7 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>#</th>
                         <th>Nome</th>
                         <th>Descrição</th>
                         <th>Data de Criação</th>
@@ -246,8 +282,8 @@
                     <tr th:if="${entidades.empty}">
                         <td colspan="5" class="text-center">Nenhuma entidade encontrada</td>
                     </tr>
-                    <tr th:each="entidade : ${entidades}">
-                        <td th:text="${entidade.id}"></td>
+                    <tr th:each="entidade, stat : ${entidades}">
+                        <td th:text="${stat.index + 1 + (currentPage - 1) * 10}"></td>
                         <td th:text="${entidade.nome}"></td>
                         <td th:text="${entidade.descricao}"></td>
                         <td th:text="${#temporals.format(entidade.dataCriacao, 'dd/MM/yyyy HH:mm')}"></td>
@@ -268,6 +304,32 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+        
+        <!-- Paginação -->
+        <div class="pagination" th:if="${totalPages > 1}">
+            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/entidades(page=${currentPage - 1})}" th:unless="${currentPage == 1}">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+                <span class="page-link" th:if="${currentPage == 1}">
+                    <i class="fas fa-chevron-left"></i>
+                </span>
+            </li>
+            
+            <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link" th:href="@{/entidades(page=${i})}" th:text="${i}"></a>
+            </li>
+            
+            <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                <a class="page-link" th:href="@{/entidades(page=${currentPage + 1})}" th:unless="${currentPage == totalPages}">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+                <span class="page-link" th:if="${currentPage == totalPages}">
+                    <i class="fas fa-chevron-right"></i>
+                </span>
+            </li>
         </div>
         
         <a href="/home" class="btn-voltar">

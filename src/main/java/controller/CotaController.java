@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import service.CotaService;
 import service.EntidadeService;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/cotas")
 @RequiredArgsConstructor
@@ -19,14 +21,22 @@ public class CotaController {
     private EntidadeService entidadeService;
 
     @GetMapping
-    public String listarCotas(Model model) {
-        try {
-            model.addAttribute("cotas", cotaService.listarTodos());
-            return "cota/lista";
-        } catch (Exception e) {
-            model.addAttribute("erro", "Erro ao carregar cotas: " + e.getMessage());
-            return "cota/lista";
-        }
+    public String listar(Model model, @RequestParam(defaultValue = "1") int page) {
+        int pageSize = 10;
+        List<Cota> todasCotas = cotaService.listarTodos();
+        int totalItems = todasCotas.size();
+        int totalPages = (int) Math.ceil((double) totalItems / pageSize);
+        
+        int startIndex = (page - 1) * pageSize;
+        int endIndex = Math.min(startIndex + pageSize, totalItems);
+        
+        List<Cota> cotasPagina = todasCotas.subList(startIndex, endIndex);
+        
+        model.addAttribute("cotas", cotasPagina);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        
+        return "cota/lista";
     }
 
     @GetMapping("/novo")

@@ -41,9 +41,9 @@
 
         .card {
             background: white;
-            border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
         }
 
         .card-header {
@@ -64,18 +64,53 @@
 
         .info-row {
             display: flex;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
+            align-items: flex-start;
         }
 
         .info-label {
+            width: 150px;
             font-weight: 500;
             color: #4a5568;
-            width: 150px;
         }
 
         .info-value {
-            color: #2d3748;
             flex: 1;
+            color: #2d3748;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: #4299e1;
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
         }
 
         .badge {
@@ -83,26 +118,25 @@
             border-radius: 4px;
             font-size: 0.75rem;
             font-weight: 500;
+            color: white;
         }
 
         .badge-warning {
             background-color: #ecc94b;
-            color: #744210;
         }
 
         .badge-success {
             background-color: #48bb78;
-            color: #22543d;
         }
 
         .badge-danger {
             background-color: #f56565;
-            color: #742a2a;
         }
 
         .table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 16px;
         }
 
         .table th {
@@ -136,40 +170,21 @@
             text-decoration: none;
             margin-right: 8px;
             font-size: 0.875rem;
+            border: none;
         }
 
-        .btn-info {
+        .btn-editar {
             background-color: #4299e1;
             color: white;
         }
 
-        .btn-warning {
-            background-color: #ed8936;
+        .btn-visualizar {
+            background-color: #28a745;
             color: white;
         }
 
         .btn-action:hover {
             opacity: 0.9;
-            color: white;
-        }
-
-        .btn-voltar {
-            background-color: #718096;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 20px;
-            font-size: 0.875rem;
-        }
-
-        .btn-voltar:hover {
-            background-color: #4a5568;
             color: white;
         }
     </style>
@@ -264,9 +279,14 @@
             </div>
         </div>
 
-        <a href="/cotas" class="btn-voltar">
-            <i class="fas fa-arrow-left"></i> Voltar
-        </a>
+        <div class="btn-group">
+            <a th:href="@{/cotas/{id}/editar(id=${cota.id})}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+            <a href="/cotas" class="btn btn-warning">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+        </div>
     </div>
 </body>
 </html> 

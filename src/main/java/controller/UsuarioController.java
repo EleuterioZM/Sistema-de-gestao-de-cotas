@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import service.UsuarioService;
 import service.EntidadeService;
+import java.util.List;
 
 @Controller
 @RequestMapping("/usuarios")
@@ -20,8 +21,21 @@ public class UsuarioController {
     private EntidadeService entidadeService;
 
     @GetMapping
-    public String listarUsuarios(Model model) {
-        model.addAttribute("usuarios", usuarioService.listarTodos());
+    public String listar(Model model, @RequestParam(defaultValue = "1") int page) {
+        int pageSize = 10;
+        List<Usuario> todosUsuarios = usuarioService.listarTodos();
+        int totalItems = todosUsuarios.size();
+        int totalPages = (int) Math.ceil((double) totalItems / pageSize);
+        
+        int startIndex = (page - 1) * pageSize;
+        int endIndex = Math.min(startIndex + pageSize, totalItems);
+        
+        List<Usuario> usuariosPagina = todosUsuarios.subList(startIndex, endIndex);
+        
+        model.addAttribute("usuarios", usuariosPagina);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        
         return "usuarios/lista";
     }
 

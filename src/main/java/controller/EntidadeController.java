@@ -7,6 +7,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import service.EntidadeService;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/entidades")
 @RequiredArgsConstructor
@@ -14,8 +16,21 @@ public class EntidadeController {
     private final EntidadeService entidadeService;
 
     @GetMapping
-    public String listarEntidades(Model model) {
-        model.addAttribute("entidades", entidadeService.listarTodos());
+    public String listar(Model model, @RequestParam(defaultValue = "1") int page) {
+        int pageSize = 10;
+        List<Entidade> todasEntidades = entidadeService.listarTodos();
+        int totalItems = todasEntidades.size();
+        int totalPages = (int) Math.ceil((double) totalItems / pageSize);
+        
+        int startIndex = (page - 1) * pageSize;
+        int endIndex = Math.min(startIndex + pageSize, totalItems);
+        
+        List<Entidade> entidadesPagina = todasEntidades.subList(startIndex, endIndex);
+        
+        model.addAttribute("entidades", entidadesPagina);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        
         return "entidade/lista";
     }
 
