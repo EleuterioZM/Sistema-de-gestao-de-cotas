@@ -10,5 +10,6 @@ import java.util.List;
 public interface NotificacaoRepository extends JpaRepository<Notificacao, Integer> {
     List<Notificacao> findByEntidadeId(Integer entidadeId);
     List<Notificacao> findByLidaFalse();
+    List<Notificacao> findByLidaTrue();
     List<Notificacao> findByEntidadeIdAndLidaFalse(Integer entidadeId);
 }

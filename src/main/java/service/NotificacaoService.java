@@ -27,6 +27,10 @@ public class NotificacaoService {
         return notificacaoRepository.findByLidaFalse();
     }
 
+    public List<Notificacao> listarLidas() {
+        return notificacaoRepository.findByLidaTrue();
+    }
+
     public List<Notificacao> listarNaoLidasPorEntidade(Integer entidadeId) {
         return notificacaoRepository.findByEntidadeIdAndLidaFalse(entidadeId);
     }
